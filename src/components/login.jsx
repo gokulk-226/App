@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/login.jpg";
 import "../styles/login.css";
 
+const API_BASE = "https://inventrack-ungc.onrender.com"; // ✅ Updated API base URL
+
 export default function Login() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -31,10 +33,9 @@ export default function Login() {
       navigate("/admin", { replace: true });
       return;
     }
-    
 
     try {
-      const response = await fetch("http://localhost:5000/users");
+      const response = await fetch(`${API_BASE}/users`);
       if (!response.ok) throw new Error("Network response was not ok");
 
       const users = await response.json();
