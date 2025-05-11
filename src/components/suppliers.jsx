@@ -38,7 +38,7 @@ function Supplier() {
     setIsLoading(true);
     setError("");
     try {
-      const response = await axios.get("http://localhost:5000/suppliers");
+      const response = await axios.get('https://inventrack-ungc.onrender.com/suppliers');
       setSuppliers(response.data);
     } catch (error) {
       setError("Failed to fetch suppliers. Please try again.");
@@ -110,7 +110,7 @@ function Supplier() {
 
     try {
       setIsLoading(true);
-      await axios.post("http://localhost:5000/suppliers", {
+      await axios.post('https://inventrack-ungc.onrender.com/suppliers', {
         name: name.trim(),
         email: email.trim(),
         contactNo: contactNo.trim()
@@ -143,7 +143,7 @@ function Supplier() {
 
     try {
       setIsLoading(true);
-      await axios.put(`http://localhost:5000/suppliers/${id}`, {
+      await axios.put(`https://inventrack-ungc.onrender.com/suppliers/${id}`, {
         name: editedName.trim(),
         email: editedEmail.trim(),
         contactNo: editedContactNo.trim(),
@@ -162,7 +162,7 @@ function Supplier() {
     
     try {
       setIsLoading(true);
-      await axios.delete(`http://localhost:5000/suppliers/${id}`);
+      await axios.delete(`https://inventrack-ungc.onrender.com/suppliers/${id}`);
       await fetchSuppliers();
     } catch (error) {
       setError(error.response?.data?.error || "Error deleting supplier");
