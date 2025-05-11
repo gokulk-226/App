@@ -101,7 +101,7 @@ function Supplier() {
   const handleAddSupplier = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     const validationError = validateInputs(name, email, contactNo);
     if (validationError) {
       setError(validationError);
@@ -110,15 +110,16 @@ function Supplier() {
 
     try {
       setIsLoading(true);
-      await axios.post('https://inventrack-ungc.onrender.com/suppliers', {
+      const response = await axios.post('https://inventrack-ungc.onrender.com/suppliers', {
         name: name.trim(),
         email: email.trim(),
         contactNo: contactNo.trim()
       });
+      // Add new supplier directly to the state to avoid refetching
+      setSuppliers(prevSuppliers => [...prevSuppliers, response.data]);
       setName("");
       setEmail("");
       setContactNo("");
-      await fetchSuppliers();
     } catch (error) {
       setError(error.response?.data?.error || "Error adding supplier");
     } finally {
@@ -149,7 +150,10 @@ function Supplier() {
         contactNo: editedContactNo.trim(),
       });
       setEditMode(null);
-      await fetchSuppliers();
+      // Update the state with the new edited supplier
+      setSuppliers(prevSuppliers => prevSuppliers.map(supplier => 
+        supplier._id === id ? { ...supplier, name: editedName, email: editedEmail, contactNo: editedContactNo } : supplier
+      ));
     } catch (error) {
       setError(error.response?.data?.error || "Error updating supplier");
     } finally {
@@ -159,11 +163,11 @@ function Supplier() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this supplier?")) return;
-    
+
     try {
       setIsLoading(true);
       await axios.delete(`https://inventrack-ungc.onrender.com/suppliers/${id}`);
-      await fetchSuppliers();
+      setSuppliers(prevSuppliers => prevSuppliers.filter(supplier => supplier._id !== id));
     } catch (error) {
       setError(error.response?.data?.error || "Error deleting supplier");
     } finally {
