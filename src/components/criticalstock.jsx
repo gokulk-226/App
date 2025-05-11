@@ -10,6 +10,8 @@ const CriticalStock = () => {
   const [showScrollHint, setShowScrollHint] = useState(false);
   const tableRef = useRef(null);
 
+  const API_BASE = "https://inventrack-ungc.onrender.com";
+
   useEffect(() => {
     fetchStocks();
   }, []);
@@ -17,11 +19,7 @@ const CriticalStock = () => {
   useEffect(() => {
     const checkScrollHint = () => {
       const el = tableRef.current;
-      if (el && el.scrollHeight > el.clientHeight) {
-        setShowScrollHint(true);
-      } else {
-        setShowScrollHint(false);
-      }
+      setShowScrollHint(el && el.scrollHeight > el.clientHeight);
     };
 
     checkScrollHint();
@@ -31,19 +29,20 @@ const CriticalStock = () => {
 
   const fetchStocks = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/stock");
+      const response = await axios.get(`${API_BASE}/stock`);
       setStocks(response.data);
     } catch (error) {
       console.error("Error fetching stocks:", error);
     }
   };
 
-  const filteredStocks = stocks.filter(stock =>
-    stock.quantity < 20 &&
-    stock.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (category ? stock.category.toLowerCase().includes(category.toLowerCase()) : true) &&
-    (supplier ? stock.supplier.toLowerCase().includes(supplier.toLowerCase()) : true)
-  );
+  const filteredStocks = stocks.filter((stock) => {
+    const isCritical = stock.quantity < 20;
+    const matchesName = stock.name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = category ? stock.category?.toLowerCase().includes(category.toLowerCase()) : true;
+    const matchesSupplier = supplier ? stock.supplier?.toLowerCase().includes(supplier.toLowerCase()) : true;
+    return isCritical && matchesName && matchesCategory && matchesSupplier;
+  });
 
   return (
     <div className="container">
@@ -89,10 +88,10 @@ const CriticalStock = () => {
                   className={stock.quantity < 10 ? "critical" : "warning"}
                 >
                   <td>{stock.name}</td>
-                  <td>{stock.category}</td>
-                  <td>{stock.supplier}</td>
+                  <td>{stock.category || "N/A"}</td>
+                  <td>{stock.supplier || "N/A"}</td>
                   <td>{stock.quantity}</td>
-                  <td>₹{stock.pricePerUnit.toFixed(2)}</td>
+                  <td>₹{Number(stock.pricePerUnit).toFixed(2)}</td>
                 </tr>
               ))
             ) : (
@@ -105,7 +104,6 @@ const CriticalStock = () => {
           </tbody>
         </table>
 
-        {/* Scroll hint icon */}
         {showScrollHint && (
           <span className="material-symbols-outlined scroll-hint-icon">
             arrow_downward_alt

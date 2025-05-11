@@ -14,6 +14,7 @@ function Purchase() {
   const [isLoading, setIsLoading] = useState(false);
 
   const tableRef = useRef(null);
+  const API_BASE = "https://inventrack-ungc.onrender.com";
 
   useEffect(() => {
     fetchPurchases();
@@ -33,7 +34,7 @@ function Purchase() {
 
   const fetchPurchases = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/purchases");
+      const res = await axios.get(`${API_BASE}/purchases`);
       setPurchases(res.data);
     } catch (error) {
       console.error("Error fetching purchases:", error);
@@ -42,7 +43,7 @@ function Purchase() {
 
   const fetchSuppliers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/suppliers");
+      const res = await axios.get(`${API_BASE}/suppliers`);
       setSuppliers(res.data);
     } catch (error) {
       console.error("Error fetching suppliers:", error);
@@ -55,26 +56,26 @@ function Purchase() {
     const trimmedName = name.trim();
     const qty = Number(quantity);
     const price = Number(pricePerUnit);
-    const dateOfPurchase = new Date().toISOString(); // Auto-fill date
+    const dateOfPurchase = new Date().toISOString();
 
-    if (!trimmedName || !quantity || !pricePerUnit || !supplier || !category) {
+    if (!trimmedName || !qty || !price || !supplier || !category) {
       alert("All fields are required.");
       return;
     }
 
-    if (isNaN(qty) || qty <= 0) {
+    if (qty <= 0 || isNaN(qty)) {
       alert("Quantity must be a positive number.");
       return;
     }
 
-    if (isNaN(price) || price <= 0) {
+    if (price <= 0 || isNaN(price)) {
       alert("Price per unit must be a positive number.");
       return;
     }
 
     try {
       setIsLoading(true);
-      const response = await axios.post("http://localhost:5000/purchases/add", {
+      await axios.post(`${API_BASE}/purchases/add`, {
         name: trimmedName,
         quantity: qty,
         pricePerUnit: price,
@@ -94,7 +95,7 @@ function Purchase() {
       setCategory("");
     } catch (error) {
       console.error("Error adding purchase:", error);
-      alert(error.response?.data?.error || "Error adding purchase");
+      alert(error.response?.data?.error || "Error adding purchase.");
     } finally {
       setIsLoading(false);
     }
@@ -104,10 +105,10 @@ function Purchase() {
     if (!window.confirm("Are you sure you want to delete this purchase?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/purchases/${id}`);
+      await axios.delete(`${API_BASE}/purchases/${id}`);
       fetchPurchases();
     } catch (error) {
-      alert(error.response?.data?.error || "Error deleting purchase");
+      alert(error.response?.data?.error || "Error deleting purchase.");
     }
   };
 
@@ -210,7 +211,7 @@ function Purchase() {
                   <td>{purchase.name}</td>
                   <td>{purchase.category}</td>
                   <td>{purchase.quantity}</td>
-                  <td>₹{purchase.pricePerUnit.toFixed(2)}</td>
+                  <td>₹{Number(purchase.pricePerUnit).toFixed(2)}</td>
                   <td>{purchase.supplier?.name || "Unknown"}</td>
                   <td>
                     {purchase.dateOfPurchase
