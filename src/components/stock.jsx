@@ -8,6 +8,9 @@ const Stock = () => {
   const [category, setCategory] = useState("");
   const [supplier, setSupplier] = useState("");
   const [showScrollHint, setShowScrollHint] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const tableRef = useRef(null);
 
   useEffect(() => {
@@ -27,18 +30,23 @@ const Stock = () => {
   }, [stocks]);
 
   const fetchStocks = async () => {
+    setIsLoading(true);
+    setError("");
     try {
-      const response = await axios.get("http://localhost:5000/stock");
+      const response = await axios.get("https://inventrack-ungc.onrender.com/stock");
       setStocks(response.data);
-    } catch (error) {
-      console.error("Error fetching stocks:", error);
+    } catch (err) {
+      setError("Failed to fetch stock data. Please try again later.");
+      console.error("Error fetching stocks:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const filteredStocks = stocks.filter(stock =>
     stock.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (category ? stock.category.toLowerCase() === category.toLowerCase() : true) &&
-    (supplier ? stock.supplier.toLowerCase().includes(supplier.toLowerCase()) : true)
+    (category ? stock.category?.toLowerCase() === category.toLowerCase() : true) &&
+    (supplier ? stock.supplier?.toLowerCase().includes(supplier.toLowerCase()) : true)
   );
 
   return (
@@ -66,6 +74,8 @@ const Stock = () => {
         />
       </form>
 
+      {error && <div className="error-message">{error}</div>}
+
       <div className="table-container" ref={tableRef}>
         <table className="table-1">
           <thead>
@@ -78,14 +88,18 @@ const Stock = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredStocks.length > 0 ? (
+            {isLoading ? (
+              <tr>
+                <td colSpan="5" className="loading">Loading stock...</td>
+              </tr>
+            ) : filteredStocks.length > 0 ? (
               filteredStocks.map((stock) => (
                 <tr key={stock._id}>
                   <td>{stock.name}</td>
                   <td>{stock.category}</td>
                   <td>{stock.supplier}</td>
                   <td>{stock.quantity}</td>
-                  <td>₹{stock.pricePerUnit.toFixed(2)}</td>
+                  <td>₹{parseFloat(stock.pricePerUnit).toFixed(2)}</td>
                 </tr>
               ))
             ) : (
@@ -106,4 +120,4 @@ const Stock = () => {
   );
 };
 
-export default Stock; 
+export default Stock;
