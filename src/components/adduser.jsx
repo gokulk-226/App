@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../styles/styles.css";
 
+const API_BASE = "https://inventrack-ungc.onrender.com";
+
 function AddUser() {
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState("");
@@ -10,7 +12,6 @@ function AddUser() {
   const [editedUsername, setEditedUsername] = useState("");
   const [editedPassword, setEditedPassword] = useState("");
   const [showScrollHint, setShowScrollHint] = useState(false);
-
   const tableRef = useRef(null);
 
   useEffect(() => {
@@ -32,7 +33,7 @@ function AddUser() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/users");
+      const response = await axios.get(`${API_BASE}/users`);
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -44,28 +45,25 @@ function AddUser() {
   const handleAddUser = async (e) => {
     e.preventDefault();
 
-    // Input validation
-    if (!username || !password) {
+    if (!username.trim() || !password.trim()) {
       return alert("All fields are required!");
     }
 
     if (!usernameRegex.test(username)) {
-      alert("Invalid username! Use only alphabets followed by @admin or @billdesk.");
-      return;
+      return alert("Username must be in the format name@admin or name@billdesk.");
     }
 
-    if (users.some((user) => user.username === username)) {
-      alert("Username already exists! Please choose a different username.");
-      return;
+    if (users.some((u) => u.username === username)) {
+      return alert("Username already exists.");
     }
 
     try {
-      await axios.post("http://localhost:5000/users", { username, password });
+      await axios.post(`${API_BASE}/users`, { username, password });
       setUsername("");
       setPassword("");
       fetchUsers();
     } catch (error) {
-      alert(error.response?.data?.error || "Error adding user");
+      alert(error.response?.data?.error || "Error adding user.");
     }
   };
 
@@ -76,30 +74,27 @@ function AddUser() {
   };
 
   const handleSaveEdit = async (id) => {
-    // Input validation
-    if (!editedUsername || !editedPassword) {
-      return alert("Fields cannot be empty!");
+    if (!editedUsername.trim() || !editedPassword.trim()) {
+      return alert("Fields cannot be empty.");
     }
 
     if (!usernameRegex.test(editedUsername)) {
-      alert("Invalid username! Use only alphabets followed by @admin or @billdesk.");
-      return;
+      return alert("Username must be in the format name@admin or name@billdesk.");
     }
 
-    if (users.some((user) => user.username === editedUsername && user._id !== id)) {
-      alert("Username already exists! Please choose a different username.");
-      return;
+    if (users.some((u) => u.username === editedUsername && u._id !== id)) {
+      return alert("Username already exists.");
     }
 
     try {
-      await axios.put(`http://localhost:5000/users/${id}`, {
+      await axios.put(`${API_BASE}/users/${id}`, {
         username: editedUsername,
         password: editedPassword,
       });
       setEditMode(null);
       fetchUsers();
     } catch (error) {
-      alert(error.response?.data?.error || "Error updating user");
+      alert(error.response?.data?.error || "Error updating user.");
     }
   };
 
@@ -107,10 +102,10 @@ function AddUser() {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/users/${id}`);
+      await axios.delete(`${API_BASE}/users/${id}`);
       fetchUsers();
     } catch (error) {
-      alert(error.response?.data?.error || "Error deleting user");
+      alert(error.response?.data?.error || "Error deleting user.");
     }
   };
 
@@ -121,7 +116,7 @@ function AddUser() {
       <form onSubmit={handleAddUser} className="horizontal-form">
         <input
           type="text"
-          placeholder="Username(e.g:name@billdesk)"
+          placeholder="Username (e.g. name@billdesk)"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -148,7 +143,7 @@ function AddUser() {
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan="3" className="no-records">No users found</td>
+                <td colSpan="3" className="no-records">No users found.</td>
               </tr>
             ) : (
               users.map((user) => (

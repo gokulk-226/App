@@ -3,6 +3,8 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "../styles/styles.css";
 
+const API_BASE = "https://inventrack-ungc.onrender.com";
+
 const Billing = () => {
   const [stockData, setStockData] = useState([]);
   const [billingDetails, setBillingDetails] = useState([]);
@@ -30,11 +32,11 @@ const Billing = () => {
   }, []);
 
   const fetchStockData = () => {
-    axios.get("http://localhost:5000/stock").then(res => setStockData(res.data));
+    axios.get(`${API_BASE}/stock`).then(res => setStockData(res.data));
   };
 
   const fetchBillingDetails = () => {
-    axios.get("http://localhost:5000/billing").then(res => {
+    axios.get(`${API_BASE}/billing`).then(res => {
       setBillingDetails(res.data);
       setTimeout(checkScrollHint, 100);
     });
@@ -179,20 +181,18 @@ const Billing = () => {
     }
 
     try {
-      // First update stock
       for (const item of productList) {
         const stockItem = stockData.find(s => s.name === item.name);
         if (!stockItem || stockItem.quantity < item.quantity) {
           alert(`Insufficient stock for ${item.name}`);
           return;
         }
-        await axios.put(`http://localhost:5000/stock/${stockItem._id}`, {
+        await axios.put(`${API_BASE}/stock/${stockItem._id}`, {
           quantity: stockItem.quantity - item.quantity,
         });
       }
 
-      // Create bill in database
-      await axios.post("http://localhost:5000/billing", {
+      await axios.post(`${API_BASE}/billing`, {
         customerName,
         mobile,
         items: productList,
@@ -200,11 +200,9 @@ const Billing = () => {
         grandTotal: productList.reduce((sum, item) => sum + item.totalPrice, 0)
       });
 
-      // Generate and save PDF
       const doc = generatePDF();
       doc.save(`bill_${customerName}_${date}.pdf`);
 
-      // Reset form
       setProductList([]);
       setFormData({
         name: "",
@@ -217,7 +215,6 @@ const Billing = () => {
         mobile: "",
       });
 
-      // Refresh data
       fetchStockData();
       fetchBillingDetails();
       
@@ -265,7 +262,6 @@ const Billing = () => {
     doc.setFont("helvetica", "normal");
     doc.text("Thank you for your purchase!", 20, y + 20);
 
-    // Open PDF in new tab
     const pdfBlob = doc.output('blob');
     const pdfUrl = URL.createObjectURL(pdfBlob);
     window.open(pdfUrl, '_blank');
