@@ -27,6 +27,25 @@ const Billing = () => {
     fetchStockData();
     fetchBillingDetails();
   }, []);
+    useEffect(() => {
+    if (customerInfo.customerName) {
+      const customerBills = billingDetails.filter(
+        bill => bill.customerName === customerInfo.customerName
+      );
+      
+      if (customerBills.length > 0) {
+        // Get the most recent bill for this customer
+        const latestBill = customerBills.sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        )[0];
+        
+        setCustomerInfo(prev => ({
+          ...prev,
+          mobile: latestBill.mobile
+        }));
+      }
+    }
+  }, [customerInfo.customerName, billingDetails]);
 
   const fetchStockData = () => {
     axios.get(`${API_BASE}/stock`).then((res) => setStockData(res.data));
@@ -299,33 +318,32 @@ const Billing = () => {
       <div className="form">
         <div className="filter-form">
           <div className="input-group">
-            <input
-              type="text"
-              list="customerNames"
-              placeholder="Customer Name"
-              value={customerInfo.customerName}
-              onChange={(e) =>
-                setCustomerInfo((prev) => ({ ...prev, customerName: e.target.value }))
-              }
-            />
-            <datalist id="customerNames">
-              {[...new Set(billingDetails.map((b) => b.customerName))].map(
-                (name, index) => (
-                  <option key={index} value={name} />
-                )
-              )}
-            </datalist>
-          </div>
+        <input
+          list="customerNames"
+          placeholder="Customer Name"
+          value={customerInfo.customerName}
+          onChange={(e) => setCustomerInfo(prev => ({
+            ...prev,
+            customerName: e.target.value
+          }))}
+        />
+        <datalist id="customerNames">
+          {Array.from(new Set(billingDetails.map(b => b.customerName)))
+            .map((name, index) => (
+              <option key={index} value={name} />
+            ))}
+        </datalist>
+      </div>
 
-          <div className="input-group">
-            <input
-              type="tel"
-              placeholder="Mobile Number"
-              value={customerInfo.mobile}
-              onChange={handleMobileChange}
-              maxLength="10"
-            />
-          </div>
+      <div className="input-group">
+        <input
+          type="tel"
+          placeholder="Mobile Number"
+          value={customerInfo.mobile}
+          onChange={handleMobileChange}
+          maxLength="10"
+        />
+      </div>
 
           <div className="input-group">
             <select value={selectedItem} onChange={handleItemChange}>
