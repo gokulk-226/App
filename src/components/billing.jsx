@@ -129,69 +129,47 @@ const Billing = () => {
     });
   };
 
-   const generatePDF = () => {
-  const { customerName, mobile } = customerInfo;
-  const date = new Date().toISOString().split("T")[0];
-  const doc = new jsPDF();
+  const generatePDF = () => {
+    const { customerName, mobile } = customerInfo;
+    const date = new Date().toISOString().split("T")[0];
+    const doc = new jsPDF();
 
-  // Header
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
-  doc.text("KPS SILKS", 105, 20, { align: "center" });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("KPS SILKS", 20, 20);
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("415 Uthukuli Road,", 105, 27, { align: "center" });
-  doc.text("Kunnnathur, Tamil Nadu - 638103", 105, 32, { align: "center" });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("415 Uthukuli Road,", 20, 28);
+    doc.text("Kunnnathur, Tamil Nadu - 638103", 20, 33);
 
-  // Date and Customer Info
-  doc.setFontSize(12);
-  doc.text(`Date: ${date}`, 200, 40, { align: "right" });
+    doc.setFontSize(12);
+    doc.text(`Date: ${date}`, 150, 20, { align: "right" });
 
-  doc.setFontSize(11);
-  doc.text(`Customer Name : ${customerName}`, 20, 50);
-  doc.text(`Mobile Number : +91 ${mobile}`, 20, 58);
+    doc.text(`Customer Name : ${customerName}`, 20, 45);
+    doc.text(`Mobile Number : +91 ${mobile}`, 20, 50);
 
-  // Table Header
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.line(20, 66, 200, 66); // Top border
-  doc.text("S.No", 22, 73);
-  doc.text("Product", 42, 73);
-  doc.text("Qty", 120, 73, { align: "right" });
-  doc.text("Price", 155, 73, { align: "right" });
-  doc.text("Total", 195, 73, { align: "right" });
-  doc.line(20, 76, 200, 76); // Underline
+    doc.text("-------------------------------------------------------------", 20, 55);
 
-  // Product Rows
-  doc.setFont("helvetica", "normal");
-  let y = 85;
-  let grandTotal = 0;
+    let y = 65;
+    let grandTotal = 0;
 
-  productList.forEach((item, idx) => {
-    doc.text(`${idx + 1}`, 22, y);
-    doc.text(item.name, 42, y);
-    doc.text(`${item.quantity}`, 120, y, { align: "right" });
-    doc.text(`Rs. ${item.price.toFixed(2)}`, 155, y, { align: "right" });
-    doc.text(`Rs. ${item.totalPrice.toFixed(2)}`, 195, y, { align: "right" });
-    grandTotal += item.totalPrice;
-    y += 10;
-  });
+    productList.forEach((item, idx) => {
+      doc.text(`${idx + 1}) Product: ${item.name}`, 20, y);
+      doc.text(`Qty: ${item.quantity}, Price: Rs. ${item.price.toFixed(2)}`, 30, y + 7);
+      doc.text(`Total: Rs. ${item.totalPrice.toFixed(2)}`, 30, y + 14);
+      grandTotal += item.totalPrice;
+      y += 20;
+    });
 
-  // Table Bottom Line
-  doc.line(20, y - 2, 200, y - 2);
+    doc.text("-------------------------------------------------------------", 20, y);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Grand Total: Rs. ${grandTotal.toFixed(2)}`, 20, y + 10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Thank you for your purchase!", 20, y + 20);
 
-  // Grand Total
-  doc.setFont("helvetica", "bold");
-  doc.text(`Grand Total: Rs. ${grandTotal.toFixed(2)}`, 195, y + 10, { align: "right" });
-
-  // Footer
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  doc.text("Thank you for shopping with us!", 105, y + 25, { align: "center" });
-
-  return doc;
-};
+    return doc;
+  };
 
   const handleDownloadPDF = async () => {
     const { customerName, mobile } = customerInfo;
@@ -246,69 +224,49 @@ const Billing = () => {
       alert("Error generating bill.");
     }
   };
-const openBillPDF = (bill) => {
-  const doc = new jsPDF();
 
-  // Store Header
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
-  doc.text("KPS SILKS", 105, 20, { align: "center" });
+  const openBillPDF = (bill) => {
+    const doc = new jsPDF();
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("KPS SILKS", 20, 20);
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("415 Uthukuli Road,", 105, 27, { align: "center" });
-  doc.text("Kunnnathur, Tamil Nadu - 638103", 105, 32, { align: "center" });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("415 Uthukuli Road,", 20, 28);
+    doc.text("Kunnnathur, Tamil Nadu - 638103", 20, 33);
 
-  // Date & Customer Info
-  doc.setFontSize(12);
-  doc.text(`Date: ${bill.date}`, 200, 40, { align: "right" });
+    doc.setFontSize(12);
+    doc.text(`Date: ${bill.date}`, 150, 20, { align: "right" });
 
-  doc.setFontSize(11);
-  doc.text(`Customer Name : ${bill.customerName}`, 20, 50);
-  doc.text(`Mobile Number : +91 ${bill.mobile}`, 20, 58);
+    doc.text(`Customer Name : ${bill.customerName}`, 20, 45);
+    doc.text(`Mobile Number : +91 ${bill.mobile}`, 20, 50);
 
-  // Table Headers
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.line(20, 66, 200, 66);
-  doc.text("S.No", 22, 73);
-  doc.text("Product", 42, 73);
-  doc.text("Qty", 120, 73, { align: "right" });
-  doc.text("Price", 155, 73, { align: "right" });
-  doc.text("Total", 195, 73, { align: "right" });
-  doc.line(20, 76, 200, 76);
+    doc.text("-------------------------------------------------------------", 20, 55);
 
-  // Table Content
-  doc.setFont("helvetica", "normal");
-  let y = 85;
-  let grandTotal = 0;
+    let y = 65;
+    let grandTotal = 0;
 
-  bill.items.forEach((item, idx) => {
-    doc.text(`${idx + 1}`, 22, y);
-    doc.text(item.name, 42, y);
-    doc.text(`${item.quantity}`, 120, y, { align: "right" });
-    doc.text(`Rs. ${item.price.toFixed(2)}`, 155, y, { align: "right" });
-    doc.text(`Rs. ${item.totalPrice.toFixed(2)}`, 195, y, { align: "right" });
-    grandTotal += item.totalPrice;
-    y += 10;
-  });
+    bill.items.forEach((item, idx) => {
+      doc.text(`${idx + 1}) Product: ${item.name}`, 20, y);
+      doc.text(`Qty: ${item.quantity}, Price: Rs. ${item.price.toFixed(2)}`, 30, y + 7);
+      doc.text(`Total: Rs. ${item.totalPrice.toFixed(2)}`, 30, y + 14);
+      grandTotal += item.totalPrice;
+      y += 20;
+    });
 
-  doc.line(20, y - 2, 200, y - 2);
+    doc.text("-------------------------------------------------------------", 20, y);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Grand Total: Rs. ${grandTotal.toFixed(2)}`, 20, y + 10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Thank you for your purchase!", 20, y + 20);
 
-  // Grand Total
-  doc.setFont("helvetica", "bold");
-  doc.text(`Grand Total: Rs. ${grandTotal.toFixed(2)}`, 195, y + 10, { align: "right" });
+    const pdfBlob = doc.output('blob');
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    window.open(pdfUrl, '_blank');
+  };
 
-  // Footer
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  doc.text("Thank you for shopping with us!", 105, y + 25, { align: "center" });
-
-  // Open PDF in new tab
-  const pdfBlob = doc.output('blob');
-  const pdfUrl = URL.createObjectURL(pdfBlob);
-  window.open(pdfUrl, '_blank');
-};
   return (
     <div className="container">
       <h2 className="gradient-heading">Billing Section</h2>
