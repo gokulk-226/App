@@ -276,7 +276,7 @@ const Billing = () => {
     grandTotal += item.totalPrice;
     y += 10;
   });
-doc.line(20, y - 2, 200, y - 2);
+
 
     // Grand Total
   doc.setFont("helvetica", "bold");
