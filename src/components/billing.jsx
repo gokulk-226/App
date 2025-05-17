@@ -315,31 +315,21 @@ const openBillPDF = (bill) => {
       <form className="form">
         <div className="filter-form">
           <div className="input-group">
-  <input
-    list="customerNames"
-    placeholder="Customer Name"
-    value={customerInfo.customerName}
-    onChange={(e) => setCustomerInfo(prev => ({ ...prev, customerName: e.target.value }))}
-  />
-  <datalist id="customerNames">
-    {Array.from(new Set(billingDetails.map(b => b.customerName))).map((name, index) => (
-      <option key={index} value={name} />
-    ))}
-  </datalist>
-</div>
-
-<div className="input-group">
-  <input
-    type="tel"
-    placeholder="Mobile Number"
-    value={customerInfo.mobile}
-    onChange={handleMobileChange}
-  />
-  {suggestedMobile && (
-    <small className="suggestion-text">Using previously saved mobile: {suggestedMobile}</small>
-  )}
-</div>
-
+            <input 
+              type="text" 
+              placeholder="Customer Name" 
+              value={customerInfo.customerName}
+              onChange={(e) => setCustomerInfo(prev => ({ ...prev, customerName: e.target.value }))} 
+            />
+          </div>
+          <div className="input-group">
+            <input 
+              type="tel" 
+              placeholder="Mobile Number" 
+              value={customerInfo.mobile}
+              onChange={handleMobileChange} 
+            />
+          </div>
           <div className="input-group">
             <select value={selectedItem} onChange={handleItemChange}>
               <option value="">Select item</option>
