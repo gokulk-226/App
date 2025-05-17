@@ -159,10 +159,10 @@ const Billing = () => {
 
     productList.forEach((item, idx) => {
       doc.text(`${idx + 1}`, 22, y);
-
-doc.text(`₹${item.price.toFixed(2)}`, 155, y, { align: "right" });
-doc.text(`₹${item.totalPrice.toFixed(2)}`, 195, y, { align: "right" });
-doc.text(`Grand Total: ₹${grandTotal.toFixed(2)}`, 195, y + 10, { align: "right" });
+      doc.text(item.name, 42, y);
+      doc.text(`${item.quantity}`, 120, y, { align: "right" });
+      doc.text(`₹ ${item.price.toFixed(2)}`, 155, y, { align: "right" });
+      doc.text(`₹ ${item.totalPrice.toFixed(2)}`, 195, y, { align: "right" });
       grandTotal += item.totalPrice;
       y += 10;
     });
