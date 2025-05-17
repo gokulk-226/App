@@ -168,7 +168,6 @@ const Billing = () => {
   });
 
   // Table Bottom Line
-  doc.line(20, y - 2, 200, y - 2);
     // Grand Total
   doc.setFont("helvetica", "bold");
   doc.text(`Grand Total: Rs. ${grandTotal.toFixed(2)}`, 195, y + 10, { align: "right" });
