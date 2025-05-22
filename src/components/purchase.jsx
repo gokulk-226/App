@@ -147,6 +147,9 @@ function Purchase() {
               type="number"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
+              onKeyDown={(e) => {
+    if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+  }}
               placeholder="Enter quantity"
               required
               min="1"
@@ -159,6 +162,9 @@ function Purchase() {
               type="number"
               value={pricePerUnit}
               onChange={(e) => setPricePerUnit(e.target.value)}
+              onKeyDown={(e) => {
+    if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+  }}
               placeholder="Enter price"
               required
               min="0.01"
