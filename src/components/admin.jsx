@@ -33,104 +33,34 @@ function Admin() {
     { label: "Add User", path: "adduser", icon: "person_add" },
   ];
 
-  const styles = {
-    container: {
-      display: "flex",
-      minHeight: "100vh",
-      fontFamily: "Poppins, sans-serif",
-      backgroundColor: "#f4f6f8",
-    },
-    sidebar: {
-      width: "14rem",
-      backgroundColor: "#0a2c66",
-      color: "#ffffff",
-      position: "fixed",
-      top: 0,
-      left: 0,
-      bottom: 0,
-      padding: "1.5rem",
-      zIndex: 10,
-      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-    },
-    header: {
-      fontSize: "1.875rem",
-      fontWeight: "700",
-      textAlign: "center",
-      marginBottom: "3rem",
-      letterSpacing: "0.05em",
-      lineHeight: "1.25",
-    },
-    subheader: {
-      fontSize: "1.125rem",
-      fontWeight: "300",
-    },
-    navList: {
-      listStyle: "none",
-      padding: 0,
-      margin: 0,
-    },
-    navItem: {
-      marginBottom: "0.75rem",
-    },
-    link: (isActive) => ({
-      display: "flex",
-      alignItems: "center",
-      gap: "1rem",
-      padding: "0.75rem 1.25rem",
-      borderRadius: "0.5rem",
-      backgroundColor: isActive ? "#ffffff" : "#1976d2",
-      color: isActive ? "#0a2c66" : "#ffffff",
-      textDecoration: "none",
-      transition: "all 0.3s ease",
-      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-    }),
-    icon: (isActive) => ({
-      fontSize: "1.25rem",
-      color: isActive ? "#0a2c66" : "#ffffff",
-    }),
-    logoutBtn: {
-      display: "flex",
-      alignItems: "center",
-      gap: "1rem",
-      padding: "0.75rem 1.25rem",
-      marginTop: "2rem",
-      width: "100%",
-      borderRadius: "0.5rem",
-      backgroundColor: "#e53935",
-      color: "#ffffff",
-      border: "none",
-      cursor: "pointer",
-      transition: "background-color 0.3s ease",
-      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-    },
-    main: {
-      marginLeft: "16rem",
-      width: "100%",
-      padding: "2rem",
-    },
-  };
-
   return (
-    <div style={styles.container}>
+    <div className="flex min-h-screen font-poppins bg-[#f4f6f8]">
       {/* Sidebar */}
-      <aside style={styles.sidebar}>
-        <h2 style={styles.header}>
-          KPS SILKS<br />
-          <span style={styles.subheader}>Admin</span>
+      <aside className="w-64 bg-[#1976d2] text-white fixed top-0 left-0 bottom-0 p-6 z-10 shadow-lg">
+        <h2 className="text-3xl font-bold text-center mb-12 tracking-wide">
+          KPS SILKS
+          <br />
+          <span className="text-lg font-light">Admin</span>
         </h2>
 
         <nav>
-          <ul style={styles.navList}>
+          <ul className="space-y-3">
             {navItems.map(({ label, path, icon }) => {
               const isActive = activeLink === path;
               return (
-                <li key={path} style={styles.navItem}>
+                <li key={path}>
                   <Link
                     to={path}
                     onClick={() => setActiveLink(path)}
-                    style={styles.link(isActive)}
+                    className={`flex items-center gap-4 px-5 py-3 rounded-lg transition-all duration-300 shadow-sm 
+                      ${isActive ? "bg-white text-[#1976d2]" : "bg-[#2196f3] text-white"} 
+                      hover:bg-white hover:text-[#1976d2]`}
                   >
-                    <span className="material-symbols-outlined" style={styles.icon(isActive)}>
+                    <span
+                      className={`material-symbols-outlined text-xl ${
+                        isActive ? "text-[#1976d2]" : "text-white"
+                      }`}
+                    >
                       {icon}
                     </span>
                     {label}
@@ -143,17 +73,15 @@ function Admin() {
 
         <button
           onClick={handleLogout}
-          style={styles.logoutBtn}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#c62828")}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#e53935")}
+          className="flex items-center gap-4 px-5 py-3 mt-8 w-full rounded-lg bg-[#f44336] hover:bg-[#d32f2f] text-white transition-all duration-300 shadow-sm"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: "1.25rem" }}>logout</span>
+          <span className="material-symbols-outlined text-xl">exit_to_app</span>
           Logout
         </button>
       </aside>
 
       {/* Main Content */}
-      <main style={styles.main}>
+      <main className="ml-64 w-full p-8 sm:p-10">
         <Outlet />
       </main>
     </div>
